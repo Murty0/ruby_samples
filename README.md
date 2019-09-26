@@ -1,1 +1,1 @@
-Ruby samples
+A collection of Ruby samples
