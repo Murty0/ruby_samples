@@ -16,6 +16,7 @@ def adobe_sign_scraper
 
 	all_agreements_with_only_required_fields = extract_only_required_fields_from_all_agreements(all_agreements: all_agreements)
 	
+	agreements_loaded_into_dynamodb = load_all_agreements_into_dynamodb(all_agreements_with_only_required_fields: all_agreements_with_only_required_fields)
 end
 
 def get_new_access_token
@@ -132,7 +133,36 @@ def extract_only_required_fields_from_all_agreements(all_agreements:)
 	end
 	#puts all_agreements_with_only_required_fields_array
 	return all_agreements_with_only_required_fields_array
+end
 
+def load_all_agreements_into_dynamodb(all_agreements_with_only_required_fields:)
+	dynamodb = Aws::DynamoDB::Client.new
+	table_name = 'adobe_sign_agreements_status'
+	all_agreements_with_only_required_fields.each do |agreement|
+
+		item = {
+			agreement_id: agreement['agreement_id'],
+			agreement_status: agreement['agreement_status'],
+			agreement_name: agreement['agreement_name'],
+			agreement_date: agreement['agreement_date'],
+			recipient_full_name: agreement['recipient_full_name_1'], # only 1 recipient needed
+			recipient_email: agreement['recipient_email_1'] # only 1 recipient needed
+		}
+
+		params = {
+		    table_name: table_name,
+		    item: item
+		}
+
+		begin
+		    dynamodb.put_item(params)
+		    puts "Successfully added agreement for: #{agreement['recipient_email_1']}"
+
+		rescue  Aws::DynamoDB::Errors::ServiceError => e
+		    puts "Unable to add agreement for: #{agreement['recipient_email_1']}"
+		    puts "#{e.message}"
+		end
+	end
 end
 
 adobe_sign_scraper
