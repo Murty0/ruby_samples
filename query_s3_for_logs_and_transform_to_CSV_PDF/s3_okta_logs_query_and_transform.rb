@@ -173,7 +173,7 @@ def generate_pdf(hashed_logs:, file_headers:, start_date:, end_date:) # rubocop:
         define_grid(columns: 5, rows: 20, gutter: 10)
 
         grid([0, 0], [1, 1]).bounding_box do
-          text 'Intercom Okta Report', size: 14, align: :left, color: '57bd9d', style: :bold # rubocop:disable Metrics/LineLength
+          text 'Okta Report', size: 14, align: :left, color: '57bd9d', style: :bold # rubocop:disable Metrics/LineLength
           text 'Report Type: Activity per date', size: 8, align: :left, color: '017dbb' # rubocop:disable Metrics/LineLength
           text "Report Date: #{start_date} to #{end_date}", size: 8, align: :left, color: '017dbb' # rubocop:disable Metrics/LineLength
           move_down 1
